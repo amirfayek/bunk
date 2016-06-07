@@ -18,5 +18,8 @@
     "morgan": "~1.6.1",
     "node-zillow": "^1.0.1",
     "serve-favicon": "~2.3.0"
+  },
+  "engines": {
+      "node": "6.2.1"
   }
 }
