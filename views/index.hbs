@@ -1,0 +1,14 @@
+<form action="/" method="get">
+    <input type="text" name="state">
+    <button type="submit">Submit</button>
+</form>
+
+<div>
+{{#each response.list.region}}
+        <div>
+            <p>{{this.id}}</p>
+            <p>{{this.name}}</p>
+        </div>
+        <br>
+    {{/each}}
+</div>
