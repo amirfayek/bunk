@@ -1,14 +1,24 @@
-<form action="/" method="get">
+<form action="/" method="post">
+    <label for="address">Address</label>
+    <input type="text" name="address">'
+
+    <label for="city">City</label>
+    <input type="text" name="city">
+
+    <label for="state">State</label>
     <input type="text" name="state">
+
+    <label for="zipcode">Zipcode</label>
+    <input type="text" name="zipcode">
+
     <button type="submit">Submit</button>
 </form>
 
 <div>
-{{#each response.list.region}}
-        <div>
-            <p>{{this.id}}</p>
-            <p>{{this.name}}</p>
-        </div>
-        <br>
-    {{/each}}
+
+            <p>{{zpid}}</p>
+            <p>{{address}}</p>
+            <p>{{yearBuilt}}</p>
+            <p>{{lotSizeSqFt}}</p>
+
 </div>
