@@ -1,10 +1,11 @@
 var express = require('express'),
- router = express.Router(),
- User = require('../models/user'),
- passport = require('passport'),
- LocalStrategy = require('passport-local').Strategy;
+    router = express.Router(),
+    User = require('../models/user'),
+    Home = require('../models/home'),
+    passport = require('passport'),
+    LocalStrategy = require('passport-local').Strategy;
 
-/* GET users listing. */
+
 router.get('/', function(req, res, next) {
     User.find(function(err, users) {
         if (err) res.send(err);
@@ -12,7 +13,19 @@ router.get('/', function(req, res, next) {
     });
 });
 
-/* GET single user listing. */
+router.post('/', function(req, res, next) {
+    var newUser = new User(req.query);
+    newUser.admin = false;
+
+    newUser.save(function(err, user) {
+        if (err) {
+            handleError(res, err.message, "Failed to create new contact.");
+        } else {
+            res.status(201).json(user);
+        }
+    });
+});
+
 router.get('/:user_id', function(req, res, next) {
     User.findById(req.params.user_id, function(err, user) {
         if (err) res.send(err);
@@ -21,6 +34,7 @@ router.get('/:user_id', function(req, res, next) {
 });
 
 router.put('/:user_id', function(req, res, next) {
+    console.log(req.body)
     var updateDoc = req.query;
     delete updateDoc._id;
 
@@ -34,35 +48,52 @@ router.put('/:user_id', function(req, res, next) {
 });
 
 router.delete('/:user_id', function(req, res, next) {
-    User.deleteOne({_id: new ObjectID(req.params.user_id)}, function(err, result) {
-      if (err) {
-        handleError(res, err.message, "Failed to delete contact");
-      } else {
-        res.status(204).end();
-      }
+    User.findByIdAndRemove(req.params.user_id, function(err) {
+        if (err) {
+            handleError(res, err.message, "Failed to delete contact");
+        } else {
+            console.log("User successfully deleted")
+            res.status(204).end();
+        }
     });
 });
 
-router.post('/', function(req, res, next) {
-    // create a new user
-    console.log(req)
-    var newUser = User({
-        first_name: req.query.first_name,
-        username: req.query.username,
-        password: req.query.password,
-        meta: {
-            bio: req.query.bio,
-            age: req.query.age,
-        },
-        admin: false
-    });
-
-    newUser.save(function(err) {
-        if (err) throw err;
-        console.log('User created!');
-        res.json({ message: 'User created!' });
+router.post('/:user_id/homes/', function(req, res, next) {
+    User.findById(req.params.user_id, function (err, user) {
+        if (err) {
+            handleError(res, err.message, "Failed to find user.");
+        } else {
+            var newHome = new Home(req.query);
+            newHome.owners.push(user);
+            newHome.save(function(err, home) {
+                if (err) {
+                    handleError(res, err.message, "Failed to create new home.");
+                } else {
+                    user.homes.push(home);
+                    user.save(function(err) {
+                        if (err) {
+                          handleError(res, err.message, "Failed to save home to user");
+                        } else {
+                            res.status(201).json(home);
+                        }
+                    })
+                }
+            });
+        }
     });
 });
+
+router.get('/:user_id/homes/:home_id', function(req, res, next) {
+    Home.findById(req.params.home_id, function(err, home) {
+        if (err) res.send(err);
+        res.json(home);
+    });
+});
+
+function handleError(res, reason, message, code) {
+  console.log("ERROR: " + reason);
+  res.status(code || 500).json({"error": message});
+}
 
 
 module.exports = router;

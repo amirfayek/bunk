@@ -8,7 +8,8 @@ require('dotenv').config();
 var passport = require('passport')
 var LocalStrategy = require('passport-local').Strategy;
 var passportLocalMongoose = require('passport-local-mongoose');
-var expressSession = require('express-session');
+var session = require('express-session');
+var mongoose = require('mongoose')
 
 var db = require('./models/db')
 
@@ -34,7 +35,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(expressSession({secret: 'mySecretKey'}));
 app.use(passport.initialize());
 app.use(passport.session());
 

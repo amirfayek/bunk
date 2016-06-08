@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var homeSchema = new Schema({
-    owner: { type : Schema.ObjectId, ref : 'User' },
+    owners: [{ type : Schema.ObjectId, ref : 'User' }],
     address: String,
     city: String,
     state: String,

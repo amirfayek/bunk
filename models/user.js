@@ -16,6 +16,7 @@ var userSchema = new Schema({
     website: String,
     twitter: String
   },
+  homes: [{ type: Schema.Types.ObjectId, ref: 'Home' }],
   created_at: Date,
   updated_at: Date
 });
