@@ -5,12 +5,17 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 require('dotenv').config();
+var passport = require('passport')
+var LocalStrategy = require('passport-local').Strategy;
+var passportLocalMongoose = require('passport-local-mongoose');
+var expressSession = require('express-session');
 
 var db = require('./models/db')
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var homes = require('./routes/homes');
+var sessions = require('./routes/sessions');
 
 
 var app = express();
@@ -29,9 +34,21 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(expressSession({secret: 'mySecretKey'}));
+app.use(passport.initialize());
+app.use(passport.session());
+
+
 app.use('/', routes);
 app.use('/users', users);
 app.use('/homes', homes);
+app.use('/sessions', sessions);
+
+
+var User = require('./models/user');
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
