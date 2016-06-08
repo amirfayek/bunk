@@ -1,5 +1,7 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+var mongoose = require('mongoose'),
+    Schema = mongoose.Schema,
+    passportLocalMongoose = require('passport-local-mongoose');
+
 
 var userSchema = new Schema({
   first_name: String,
@@ -17,6 +19,10 @@ var userSchema = new Schema({
   created_at: Date,
   updated_at: Date
 });
+
+
+userSchema.plugin(passportLocalMongoose);
+
 
 // on every save, add the date
 userSchema.pre('save', function(next) {
