@@ -6,6 +6,7 @@ var homeSchema = new Schema({
     address: String,
     city: String,
     state: String,
+    zipcode: String,
     zpid: String
 });
 
