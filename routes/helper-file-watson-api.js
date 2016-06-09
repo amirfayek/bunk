@@ -10,7 +10,7 @@ var personalityInsights = watson.personality_insights({
 'use strict';
 
 $(document).ready(function() {
-
+console.log("I'm in helper-file.")
   var demo = {
     getTooltip : undefined // Loaded later
   };
