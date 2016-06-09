@@ -1,4 +1,7 @@
 var watson = require('watson-developer-cloud');
+var extend = require('util')._extend;
+var i18n = require('i18next');
+
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -96,7 +99,7 @@ app.get('/', function(req, res) {
   res.render('index', { ct: req._csrfToken });
 });
 
-app.post('/user/profile', function(req, res, next) {
+app.post('/user/meta/bio', function(req, res, next) {
   console.log(req);
   
   var parameters = extend(req.body, { acceptLanguage : i18n.lng() });

@@ -1,10 +1,10 @@
-var watson = require('watson-developer-cloud');
+// var watson = require('watson-developer-cloud');
 
-var personalityInsights = watson.personality_insights({
-  version: 'v2',
-  username: process.env.IBM_USERNAME || 'mongodb://localhost:27017/roommate-finder',
-  password: process.env.IBM_PASSWORD || 'mongodb://localhost:27017/roommate-finder'
-});
+// var personalityInsights = watson.personality_insights({
+//   version: 'v2',
+//   username: process.env.IBM_USERNAME || 'mongodb://localhost:27017/roommate-finder',
+//   password: process.env.IBM_PASSWORD || 'mongodb://localhost:27017/roommate-finder'
+// });
 
 
 'use strict';
@@ -91,7 +91,7 @@ console.log("I'm in helper-file.")
         text: $content.val(),
         language: language
       },
-      url: '/api/profile',
+      url: '/user/meta/bio',
       dataType: 'json',
       success: function(response) {
         $loading.hide();
@@ -144,7 +144,7 @@ console.log("I'm in helper-file.")
    */
   function showTraits(data) {
     console.log('showTraits()');
-    console.log(data.);
+    console.log(data);
     $traits.show();
 
     var traitList = flatten(data.tree),
