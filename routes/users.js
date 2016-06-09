@@ -1,3 +1,7 @@
+var watson = require('watson-developer-cloud');
+
+// var personality = require('')
+
 var express = require('express'),
     router = express.Router(),
     User = require('../models/user'),
@@ -29,6 +33,7 @@ router.post('/', function(req, res, next) {
 router.get('/:user_id', function(req, res, next) {
     User.findById(req.params.user_id, function(err, user) {
         if (err) res.send(err);
+
         res.json(user);
     });
 });
