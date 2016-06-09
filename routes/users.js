@@ -13,7 +13,8 @@ var express = require('express'),
 router.get('/', function(req, res, next) {
     User.find(function(err, users) {
         if (err) res.send(err);
-        res.json(users);
+        console.log(users);
+        res.render('users', users);
     });
 });
 
@@ -33,8 +34,9 @@ router.post('/', function(req, res, next) {
 router.get('/:user_id', function(req, res, next) {
     User.findById(req.params.user_id, function(err, user) {
         if (err) res.send(err);
-        user.meta.bio = watson.
-        res.json(user);
+
+        // user.meta.bio = watson.
+        res.render('user', user);
     });
 });
 
