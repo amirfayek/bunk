@@ -1,3 +1,4 @@
+var watson = require('watson-developer-cloud');
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
