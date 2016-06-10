@@ -1,5 +1,6 @@
 var watson = require('watson-developer-cloud');
-
+var extend = require('util')._extend;
+var i18n = require('i18next');
 // var personality = require('')
 
 var express = require('express'),
@@ -9,6 +10,12 @@ var express = require('express'),
     passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy;
 
+// Create the service wrapper
+var personalityInsights = watson.personality_insights({
+  version: 'v2',
+  username: process.env.IBM_USERNAME,
+  password: process.env.IBM_PASSWORD
+});
 
 router.get('/', function(req, res, next) {
     User.find(function(err, users) {
@@ -18,7 +25,8 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/', function(req, res, next) {
-    var newUser = new User(req.query);
+    console.log(req)
+    var newUser = new User(req.headers);
     newUser.admin = false;
 
     newUser.save(function(err, user) {
@@ -33,9 +41,19 @@ router.post('/', function(req, res, next) {
 router.get('/:user_id', function(req, res, next) {
     User.findById(req.params.user_id, function(err, user) {
         if (err) res.send(err);
-        user.meta.bio = watson.
-        res.json(user);
-    });
+    }).then(function(user) {
+        var parameters = extend({text: user.meta.bio}, { acceptLanguage : i18n.lng() });
+        personalityInsights.profile(parameters, function(err, profile) {
+          if (err) {
+            console.log(err)
+            return next(err);
+          } else {
+            console.log(profile)
+            user.personality = profile;
+            res.json({user: user, personality: profile});
+          }
+        });
+    }).catch(next);
 });
 
 router.put('/:user_id', function(req, res, next) {
@@ -94,6 +112,9 @@ router.get('/:user_id/homes/:home_id', function(req, res, next) {
         res.json(home);
     });
 });
+
+
+
 
 function handleError(res, reason, message, code) {
   console.log("ERROR: " + reason);

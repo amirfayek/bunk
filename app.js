@@ -88,27 +88,3 @@ app.use(function(err, req, res, next) {
 
 module.exports = app;
 
-// Create the service wrapper
-var personalityInsights = watson.personality_insights({
-  version: 'v2',
-  username: process.env.IBM_USERNAME || 'mongodb://localhost:27017/roommate-finder',
-  password: process.env.IBM_PASSWORD || 'mongodb://localhost:27017/roommate-finder'
-});
-
-app.get('/', function(req, res) {
-  res.render('index', { ct: req._csrfToken });
-});
-
-app.post('/user/meta/bio', function(req, res, next) {
-  console.log(req);
-  
-  var parameters = extend(req.body, { acceptLanguage : i18n.lng() });
-
-  personalityInsights.profile(parameters, function(err, profile) {
-    if (err)
-      return next(err);
-    else
-      console.log(res);
-      return res.json(profile);
-  });
-});
