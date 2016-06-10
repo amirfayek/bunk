@@ -1,39 +1,31 @@
-<div class="container">
-    <div class="span3 well">
-        <center>
-        <a href="#aboutModal" data-toggle="modal" data-target="#myModal"><img src="https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcRbezqZpEuwGSvitKy3wrwnth5kysKdRqBW54cAszm_wiutku3R" name="aboutme" width="140" height="140" class="img-circle"></a>
-        <h3>{{first_name}}  {{last_name}}</h3>
-        <em>click my picture for more</em>
-    </center>
-    </div>
-    <!-- Modal -->
-    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                    <h4 class="modal-title" id="myModalLabel">More About {{first_name}}</h4>
-                    </div>
-                <div class="modal-body">
-                    <center>
-                    <img src="https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcRbezqZpEuwGSvitKy3wrwnth5kysKdRqBW54cAszm_wiutku3R" name="aboutme" width="140" height="140" border="0" class="img-circle"></a>
-                    <h3 class="media-heading">Joe Sixpack <small>USA</small></h3>
-                    <span><strong>Skills: </strong></span>
+<h1>BUNK <small>Find your space</small></h1>
+<header>
+  <figure class="profile-banner">
+    <img src="http://dru-cdn.zipcar.com/sites/default/files/sf.jpg" alt="Profile banner" />
+  </figure>
+  <figure class="profile-picture"
+    style="background-image: url('http://science-all.com/images/wallpapers/profile-pictures/profile-pictures-14.jpg')">
+  </figure>
+  <div class="profile-stats">
+    <ul>
+      <li>13    <span>Projects</span></li>
+      <li>1,354 <span>Commits</span></li>
+      <li>32    <span>Following</span></li>
+      <li>324   <span>Followers</span></li>
+    </ul>
+    <a href="javascript:void(0);" class="follow">
+      Follow {{first_name}}
+    </a>
+  </div>
+  <h1>{{first_name}} <small>{{last_name}}</small></h1>
+</header>
+<body>
+  <h1> Bio <small>I'm awesome and looking for a equally awesome place to stay. Are you super with an equally super place to stay!? If so we could be super awesome roomies!!</small></h1>
 
-                    </center>
-                    <hr>
-                    <center>
-                    <p class="text-left"><strong>Bio: </strong><br>
-                        {{meta.bio}}.</p>
-                    <br>
-                    </center>
-                </div>
-                <div class="modal-footer">
-                    <center>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">I've heard enough about {{first_name}}</button>
-                    </center>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+  <center><img src="https://processramblings.files.wordpress.com/2015/04/processramblings_adeel-javed_bpm_ibm-watson-2.png?w=665"/>
+    </center>
+  </body>
+
+
+
+</body>

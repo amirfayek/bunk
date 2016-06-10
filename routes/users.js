@@ -19,7 +19,9 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/', function(req, res, next) {
-    var newUser = new User(req.query);
+    var newUser = new User(req.headers);
+    console.log(req.query)
+    console.log(req.headers)
     newUser.admin = false;
 
     newUser.save(function(err, user) {
