@@ -1,32 +1,23 @@
-var watson = require('watson-developer-cloud');
-var extend = require('util')._extend;
-var i18n = require('i18next');
-// var personality = require('')
-
 var express = require('express'),
     router = express.Router(),
+    passport = require('passport'),
+    LocalStrategy = require('passport-local').Strategy,
     User = require('../models/user'),
     Home = require('../models/home'),
-    passport = require('passport'),
-    LocalStrategy = require('passport-local').Strategy;
+    extend = require('util')._extend,
+    watsonPersonalityInsights = require('../helpers/watson-personality-insights'),
+    Q = require('q');
 
-// Create the service wrapper
-var personalityInsights = watson.personality_insights({
-  version: 'v2',
-  username: process.env.IBM_USERNAME,
-  password: process.env.IBM_PASSWORD
-});
 
 router.get('/', function(req, res, next) {
     User.find(function(err, users) {
         if (err) res.send(err);
-        res.json(users);
+        res.status(200).json(users);
     });
 });
 
 router.post('/', function(req, res, next) {
-    console.log(req)
-    var newUser = new User(req.headers);
+    var newUser = new User(req.body);
     newUser.admin = false;
 
     newUser.save(function(err, user) {
@@ -38,40 +29,42 @@ router.post('/', function(req, res, next) {
     });
 });
 
-router.get('/:user_id', function(req, res, next) {
-    User.findById(req.params.user_id, function(err, user) {
+router.get('/:id', function(req, res, next) {
+    User.findById(req.params.id, function(err, user) {
         if (err) res.send(err);
+    }).lean().then(function(user) {
+        if (user.meta.bio) {
+            return watsonPersonalityInsights.getProfile(user.meta.bio).then(function(personality) {
+                return Object.assign(user, {personality: personality});
+            });
+        }
+        return user;
     }).then(function(user) {
-        var parameters = extend({text: user.meta.bio}, { acceptLanguage : i18n.lng() });
-        personalityInsights.profile(parameters, function(err, profile) {
-          if (err) {
-            console.log(err)
-            return next(err);
-          } else {
-            console.log(profile)
-            user.personality = profile;
-            res.json({user: user, personality: profile});
-          }
-        });
+        res.status(200).json(user)
     }).catch(next);
 });
 
-router.put('/:user_id', function(req, res, next) {
-    console.log(req.body)
-    var updateDoc = req.query;
-    delete updateDoc._id;
+router.put('/:id', function(req, res, next) {
+    User.findOne({ _id: req.params.id }, function(err, user) {
+        if (err) { return res.send(err); }
 
-    User.update({_id: req.params.user_id}, {$set: updateDoc}, function(err, doc) {
-      if (err) {
-        handleError(res, err.message, "Failed to update contact");
-      } else {
-        res.status(204).end();
-      }
+        for (prop in req.body) {
+          user[prop] = req.body[prop];
+        }
+
+        // save the user
+        user.save(function(err) {
+          if (err) {
+            return res.send(err);
+          }
+
+          res.status(204).json({ message: 'User updated!' });
+        });
     });
 });
 
-router.delete('/:user_id', function(req, res, next) {
-    User.findByIdAndRemove(req.params.user_id, function(err) {
+router.delete('/:id', function(req, res, next) {
+    User.findByIdAndRemove(req.params.id, function(err) {
         if (err) {
             handleError(res, err.message, "Failed to delete contact");
         } else {
@@ -86,7 +79,7 @@ router.post('/:user_id/homes/', function(req, res, next) {
         if (err) {
             handleError(res, err.message, "Failed to find user.");
         } else {
-            var newHome = new Home(req.query);
+            var newHome = new Home(req.body);
             newHome.owners.push(user);
             newHome.save(function(err, home) {
                 if (err) {
