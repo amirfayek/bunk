@@ -1,7 +1,3 @@
-var watson = require('watson-developer-cloud');
-var extend = require('util')._extend;
-var i18n = require('i18next');
-
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -9,27 +5,24 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 require('dotenv').config();
-var passport = require('passport')
+var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
-var passportLocalMongoose = require('passport-local-mongoose');
+var flash    = require('express-flash');
 var session = require('express-session');
 var mongoose = require('mongoose')
-
 var db = require('./models/db')
+require('./config/passport')(passport);
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var homes = require('./routes/homes');
 var sessions = require('./routes/sessions');
 
-
 var app = express();
-
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
-
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -39,20 +32,17 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Initialize Passport and restore authentication state, if any, from the session.
+app.use(session({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));
+app.use(flash());
+
 app.use(passport.initialize());
 app.use(passport.session());
 
-
 app.use('/', routes);
+app.use('/', sessions);
 app.use('/users', users);
 app.use('/homes', homes);
-app.use('/sessions', sessions);
-
-
-var User = require('./models/user');
-passport.use(new LocalStrategy(User.authenticate()));
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -87,4 +77,3 @@ app.use(function(err, req, res, next) {
 
 
 module.exports = app;
-
